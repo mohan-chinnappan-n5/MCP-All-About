@@ -39,7 +39,7 @@ MCP lays out clear rules for how AI can find, connect to, and use external tools
 - Components
     - Hosts - LLM apps that initiate connections (example Claude Desktop, your Agent app)
         - 
-    - Clients - 
+    - Clients  (eg. Claude Desktop)
         - invokes **tools**
         - queries for **resources**
         - interpolates **prompts**
@@ -74,6 +74,18 @@ def get_greeting(name: str) -> str:
     return f"Hello, {name}!"
 
 ```
+
+
+
+## Dynamic Discovery
+
+AI agents automatically detect **available MCP servers and their capabilities**, without hard-coded integrations. 
+
+For example, if you spin up a new MCP server (like a Salesforce), agents can immediately recognize and use it via a standardized API, offering flexibility traditional approaches can't match.
+
+The model/agent can now call the MCP tool actions as needed. Make sure to monitor logs to see that it’s calling the servers correctly. You’ll see requests hitting the MCP server and responses coming back.
+
+
 <a name="json-rpc2"></a>
 
 ### JSON-RPC 2.0
@@ -123,6 +135,38 @@ Example Error:  (like the method does not exist).
 - Initially, much attention went to **model capabilities and prompt techniques**, not to integration!
 
 
+## Before MCP
+- Retrieval-Augmented Generation (RAG) and Vector Databases
+
+We supply context to LLMs via a retriever that searches a knowledge base (documents, embeddings) and injects the top results into the prompt to LLM.
+
+- This addresses the knowledge cutoff or limited memory of models.
+- However, RAG usually deals with static text snippets and doesn’t inherently let the **model perform actions** or queries beyond what’s indexed.
+
+- MCP can work alongside RAG – for instance, an MCP server could interface with a vector database or search engine, allowing the model to issue search queries as a tool rather than implicitly relying on retrieval every prompt.
+
+- MCP is a more general mechanism: where RAG gives passive context, MCP lets the model actively fetch or act on context through defined channels.
+
+- In scenarios where up-to-date or interactive data is needed (say, querying a live database or posting an update), MCP extends beyond just retrieving text – it can trigger operations.
+
+
+## MCP and agents
+MCP is not itself an "agent framework"; rather, it acts as a standardized integration layer for agents.
+
+MCP is all about the Action part – specifically, giving agents a standardized way to perform actions involving external data or tools.
+
+It provides the plumbing that connects an AI agent to the outside world in a secure, structured manner. Without MCP (or something like it), every time an agent needs to do something in the world – whether fetching a file, querying a database, or invoking an API – developers would have to wire up a custom integration or use ad-hoc solutions. That’s like building a robot but having to custom-craft each finger to grasp different objects – tedious and not scalable.
+
+MCP streamlines the integration of external functionalities, making agents more versatile, adaptable, and capable of performing sophisticated tasks across diverse contexts.
+
+
+## Sample Use cases
+Multi-Step, Cross-System Workflows Agentic systems often need to coordinate across platforms. Say an AI plans an event: it checks your calendar, books a venue, emails guests, arranges travel, and updates a budget sheet. Right now, this requires stitching APIs together manually. With MCP, all these actions happen through a single interface. The agent calls a series of MCP tools (one for each task), keeping shared context across them—no lost threads, no custom integrations.
+
+
+### Challenges
+- Previous agent-based frameworks have demonstrated that AI models can struggle with tool selection and execution. 
+- MCP attempts to mitigate this by providing structured tool descriptions and specifications, but success still hinges on the quality of these descriptions and the AI’s ability to interpret them correctly.
 
 
 ## References
@@ -132,4 +176,6 @@ Example Error:  (like the method does not exist).
 - [What Is MCP, and Why Is Everyone – Suddenly!– Talking About It?](https://huggingface.co/blog/Kseniase/mcp)
 
 - [Video:Building Agents with Model Context Protocol - Full Workshop with Mahesh Murag of Anthropic](https://www.youtube.com/watch?v=kQmXtrmQ5Zg)
+
+- [Exposing Services with MCP](https://thefocus.ai/posts/exposing-services-with-mcp/)
 
