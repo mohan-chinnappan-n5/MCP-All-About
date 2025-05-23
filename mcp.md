@@ -34,8 +34,46 @@ MCP lays out clear rules for how AI can find, connect to, and use external tools
 
 ## MCP details
 
-- MCP uses [JSON RPC 2.0](#json-rpc2)
+- MCP uses [JSON RPC 2.0](#json-rpc2) - [Schema in ts](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/2025-03-26/schema.ts) - [schema.json](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/2025-03-26/schema.json)
 
+- Components
+    - Hosts - LLM apps that initiate connections (example Claude Desktop, your Agent app)
+        - 
+    - Clients - 
+        - invokes **tools**
+        - queries for **resources**
+        - interpolates **prompts**
+
+    - Servers - Services that provide **context and capabilities**
+        - Exposes tools via ```@mcp.tool()```
+        - Exposes Resources
+        - Exposes Prompts
+
+
+
+## Simple  MCP server (add 2 integers)
+```py
+# server.py
+from mcp.server.fastmcp import FastMCP
+
+# Create an MCP server
+mcp = FastMCP("Demo")
+
+
+# Add an addition tool
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+
+# Add a dynamic greeting resource
+@mcp.resource("greeting://{name}")
+def get_greeting(name: str) -> str:
+    """Get a personalized greeting"""
+    return f"Hello, {name}!"
+
+```
 <a name="json-rpc2"></a>
 
 ### JSON-RPC 2.0
@@ -49,7 +87,7 @@ MCP lays out clear rules for how AI can find, connect to, and use external tools
     - Error handling is standardized.
 
 For example, to call subtract method with parameters 42 and 23.
-id is used to match the response.
+id (RequestId) is used to match the response.
 ```json
 {
   "jsonrpc": "2.0",
